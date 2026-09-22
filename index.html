@@ -129,7 +129,7 @@ function clamp(v,a,b){return v<a?a:v>b?b:v}
 const R=(a,b)=>a+Math.random()*(b-a);
 
 /* ---------- TEKSTY JANUSZA ---------- */
-const LINES=["HEHE… KUPIŁEŚ GÓRKĘ? SZWAGIER DZIĘKUJE.","CIEKAWE SKĄD MASZ NA TE PIENIĄŻKI…","TO NIE STRATA. TO POZYCJA DŁUGOTERMINOWA.","SOMSIAD TEŻ TAK ZACZYNAŁ.","ANALIZĘ ROBIŁEŚ? NO WŁAŚNIE.","SPOKOJNIE, ODBIJE. ZAWSZE ODBIJA. PRAWIE.","TANIO KUPIŁEŚ? TO CZEMU PŁACZESZ?","A ŻEBY CIĘ NA STOP LOSSIE WYWALIŁO!!","POPATRZ SIĘ, WIELKI PAN JENWESTOR SIĘ ZNALAZŁ.","KUPUJESZ? SOMSIAD? NIE. TO JAK MA ROSNĄĆ?!","NO I CO, WTOPIŁEŚ? SOMSIAD SE NA IKE PRZERZUCIŁ I TRZYMA."];
+const LINES=["HEHE… KUPIŁEŚ GÓRKĘ? SZWAGIER DZIĘKUJE.","SOMSIAD TEŻ TAK ZACZYNAŁ.","ANALIZĘ ROBIŁEŚ? NO WŁAŚNIE.","SPOKOJNIE, ODBIJE. ZAWSZE ODBIJA……. PRAWIE ZAWSZE.","TANIO KUPIŁEŚ? TO CZEMU PŁACZESZ?","ALE CIĘ NA STOP LOSSIE WYWALIŁO!! HEHEHE… ŁAMATOR…","POPATRZ SIĘ, WIELKI PAN JENWESTOR SIĘ ZNALAZŁ.","KUPUJESZ SOMSIAD? ….NIE??? TO JAK MA ROSNĄĆ?!","NO I CO, WTOPIŁEŚ? SOMSIAD SE NA IKE PRZERZUCIŁ I TRZYMA.","ŁOBLIGACJE SE LEPIEJ KUP, TO WOLNIEJ BĘDZIE…","TRZĘSIESZ SIĘ PRZY STRZALE, JAKBYŚ NA TRAKTORZE JECHAŁ… HEHEHE","JA CIĘ MOGĘ NAUCZYĆ, JAK SIĘ HANDLUJE. PAWILON 4D, BRONISZE. ZAPRASZAM… HEHEHE.","NIE PŁACZ. JESZCZE 60% WZROŚNIE I BĘDZIESZ NA ZERO…"];
 let lastLine=-1;
 function pickLine(){let i;do{i=Math.floor(Math.random()*LINES.length)}while(i===lastLine);lastLine=i;return LINES[i]}
 const FIRSTLINE="TY MAKLER? MAKLEREM TO JA SIĘ NACIERAM PO GOLENIU.";let firstJ=true;
@@ -157,9 +157,9 @@ const SFX={
  bell(){tone(1568,1568,.11,'square',.12);tone(2093,2093,.3,'square',.1,.11)}
 };
 function applySnd(){document.querySelectorAll('.sndb').forEach(b=>b.innerHTML=sndOn?'&#128266;':'&#128263;')}
-function toggleSnd(e){if(e){e.stopPropagation();e.preventDefault()}sndOn=!sndOn;try{localStorage.setItem('fh_snd',sndOn?'1':'0')}catch(_){}applySnd();if(sndOn)ac()}
+function toggleSnd(e){if(e){e.stopPropagation();e.preventDefault()}sndOn=!sndOn;try{localStorage.setItem('fh_snd',sndOn?'1':'0')}catch(_){}applySnd();updateMusicVol();if(sndOn)ac()}
 applySnd();document.querySelectorAll('.sndb').forEach(b=>b.addEventListener('click',toggleSnd));
-const unlock=()=>{try{ac()}catch(e){}};
+const unlock=()=>{try{ac()}catch(e){}initMusic()};
 document.addEventListener('pointerdown',unlock);document.addEventListener('touchend',unlock);document.addEventListener('keydown',unlock);
 document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault());
@@ -167,6 +167,14 @@ document.addEventListener('dblclick',e=>e.preventDefault());
 /* ---------- ASSETY ---------- */
 const IMGS={bg:'bg.jpg',coin:'coin.png',rocket:'rocket.png',bubble:'bubble.png',bird:'bird.png',knife:'knife.png',train:'train.png',turtle:'turtle.png',pewny:'pewny.png',slot:'slot.png',fomog:'fomog.png',js:'j_smug.png',jl1:'j_laugh1.png',jl2:'j_laugh2.png'};
 const IM={};let loaded=0,failed=0;const total=Object.keys(IMGS).length;
+/* --- MUZYKA DISCO POLO --- */
+let bgMusic=null,bgMusicPlaying=false;
+function initMusic(){if(bgMusic)return;bgMusic=new Audio('music.mp3');bgMusic.loop=true;bgMusic.volume=0.18;bgMusic.preload='auto'}
+function startBgMusic(){initMusic();if(!bgMusic||bgMusicPlaying)return;bgMusic.currentTime=0;const p=bgMusic.play();if(p)p.catch(()=>{});bgMusicPlaying=true}
+function stopBgMusic(){if(bgMusic){bgMusic.pause();bgMusicPlaying=false}}
+function pauseBgMusic(){if(bgMusic&&bgMusicPlaying)bgMusic.pause()}
+function resumeBgMusic(){if(bgMusic&&bgMusicPlaying){const p=bgMusic.play();if(p)p.catch(()=>{})}}
+function updateMusicVol(){if(bgMusic)bgMusic.volume=sndOn?0.18:0}
 function loadAll(done){
  for(const k in IMGS){const im=new Image();im.onload=()=>{if(++loaded+failed===total)done()};im.onerror=()=>{failed++;if(loaded+failed===total)done()};im.src=IMGS[k];IM[k]=im}
 }
@@ -345,10 +353,10 @@ function frameLoop(ts){loop=requestAnimationFrame(frameLoop);
 function show(v){['title','pv','endv'].forEach(id=>$(id).classList.toggle('on',id===v));
  $('hud').style.display=(v===null)?'flex':'none';$('bar').style.display=(v===null)?'flex':'none'}
 function setPaused(v){if(mode!=='play'||over||paused===v)return;paused=v;$('pv').classList.toggle('on',v);
- if(!v){lastTs=null;acc=0;unlock()}}
+ if(v)pauseBgMusic();else{resumeBgMusic();lastTs=null;acc=0;unlock();}}
 $('bPause').addEventListener('click',e=>{e.preventDefault();setPaused(true)});
 $('bResume').addEventListener('click',()=>setPaused(false));
-$('bQuit').addEventListener('click',()=>{clearTimers();over=true;mode='title';hideBub();show('title')});
+$('bQuit').addEventListener('click',()=>{clearTimers();over=true;mode='title';hideBub();stopBgMusic();show('title')});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)setPaused(true);else unlock()});
 window.addEventListener('blur',()=>setPaused(true));
 window.addEventListener('pagehide',()=>setPaused(true));
@@ -358,9 +366,9 @@ function startGame(){clearTimers();hideBub();
  targets.length=0;parts.length=0;floats.length=0;ringFx.length=0;
  spawnT=400;spawnIv=1300;speedM=1;trainT=R(16000,22000);graceT=6000;
  for(const k in hudC)delete hudC[k];JB.st='peek';JB.t=0;firstJ=true;
- mode='play';show(null);hud();SFX.bell();lastTs=null;acc=0;
+ mode='play';show(null);hud();SFX.bell();lastTs=null;acc=0;startBgMusic();
  if(!loop)loop=requestAnimationFrame(frameLoop)}
-function endGame(){over=true;mode='end';hideBub();
+function endGame(){over=true;mode='end';hideBub();stopBgMusic();
  const accy=shots?Math.round(hits/shots*100):0;
  $('endzn').textContent=zn+' ZŁ';
  $('endst').textContent=`celność ${accy}% · najdłuższa seria x${bestCombo}`;
