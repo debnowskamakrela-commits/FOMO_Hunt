@@ -141,7 +141,12 @@ function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext
 function tone(f0,f1,dur,type,vol,when){const c=ac();if(!c||!sndOn)return;const t=c.currentTime+(when||0);const o=c.createOscillator(),g=c.createGain();o.type=type||'square';o.frequency.setValueAtTime(f0,t);if(f1)o.frequency.exponentialRampToValueAtTime(f1,t+dur);g.gain.setValueAtTime(vol||.15,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02)}
 function noise(dur,vol){const c=ac();if(!c||!sndOn)return;const n=c.sampleRate*dur,b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);const s=c.createBufferSource();s.buffer=b;const g=c.createGain();g.gain.value=vol||.12;const f=c.createBiquadFilter();f.type='highpass';f.frequency.value=900;s.connect(f);f.connect(g);g.connect(c.destination);s.start()}
 const SFX={
- shot(){noise(.06,.14);tone(300,140,.05,'square',.06)},
+ shot(){const c=ac();if(!c||!sndOn)return;const t=c.currentTime;
+  /* sub boom */ const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(28,t+.22);g.gain.setValueAtTime(.55,t);g.gain.setValueAtTime(.45,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+.28);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.3);
+  /* second harmonic punch */ const o2=c.createOscillator(),g2=c.createGain();o2.type='triangle';o2.frequency.setValueAtTime(240,t);o2.frequency.exponentialRampToValueAtTime(55,t+.15);g2.gain.setValueAtTime(.30,t);g2.gain.exponentialRampToValueAtTime(.001,t+.15);o2.connect(g2);g2.connect(c.destination);o2.start(t);o2.stop(t+.16);
+  /* blast noise: loud, wide, saturated */ const n=c.sampleRate*.18,b=c.createBuffer(1,n,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<n;i++){const e=1-i/n;d[i]=Math.tanh((Math.random()*2-1)*2.5)*e*e}const bs=c.createBufferSource();bs.buffer=b;const gn=c.createGain();gn.gain.setValueAtTime(.35,t);gn.gain.exponentialRampToValueAtTime(.001,t+.16);const hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=400;const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(6000,t);lp.frequency.exponentialRampToValueAtTime(800,t+.12);bs.connect(hp);hp.connect(lp);lp.connect(gn);gn.connect(c.destination);bs.start(t);
+  /* crack transient */ const o3=c.createOscillator(),g3=c.createGain();o3.type='sawtooth';o3.frequency.setValueAtTime(1200,t);o3.frequency.exponentialRampToValueAtTime(150,t+.04);g3.gain.setValueAtTime(.22,t);g3.gain.exponentialRampToValueAtTime(.001,t+.05);o3.connect(g3);g3.connect(c.destination);o3.start(t);o3.stop(t+.06);
+  /* pump tail */ const n2=c.sampleRate*.08,b2=c.createBuffer(1,n2,c.sampleRate),d2=b2.getChannelData(0);for(let i=0;i<n2;i++)d2[i]=(Math.random()*2-1)*(1-i/n2)*.6;const s2=c.createBufferSource();s2.buffer=b2;const g4=c.createGain();g4.gain.setValueAtTime(.10,t+.18);g4.gain.exponentialRampToValueAtTime(.001,t+.28);s2.connect(g4);g4.connect(c.destination);s2.start(t+.18)},
  hit(cb){const p=Math.min(cb,10);tone(620+p*40,930+p*40,.07,'square',.14);tone(930+p*40,1240+p*40,.09,'square',.11,.06)},
  big(){tone(520,780,.09,'square',.16);tone(780,1160,.12,'square',.13,.08);tone(1160,1560,.14,'square',.11,.17)},
  miss(){tone(190,120,.12,'triangle',.14)},
@@ -160,7 +165,7 @@ document.addEventListener('gesturestart',e=>e.preventDefault());
 document.addEventListener('dblclick',e=>e.preventDefault());
 
 /* ---------- ASSETY ---------- */
-const IMGS={bg:'assets/bg.jpg',coin:'assets/coin.png',rocket:'assets/rocket.png',bubble:'assets/bubble.png',bird:'assets/bird.png',knife:'assets/knife.png',train:'assets/train.png',turtle:'assets/turtle.png',pewny:'assets/pewny.png',slot:'assets/slot.png',fomog:'assets/fomog.png',js:'assets/j_smug.png',jl1:'assets/j_laugh1.png',jl2:'assets/j_laugh2.png'};
+const IMGS={bg:'bg.jpg',coin:'coin.png',rocket:'rocket.png',bubble:'bubble.png',bird:'bird.png',knife:'knife.png',train:'train.png',turtle:'turtle.png',pewny:'pewny.png',slot:'slot.png',fomog:'fomog.png',js:'j_smug.png',jl1:'j_laugh1.png',jl2:'j_laugh2.png'};
 const IM={};let loaded=0,failed=0;const total=Object.keys(IMGS).length;
 function loadAll(done){
  for(const k in IMGS){const im=new Image();im.onload=()=>{if(++loaded+failed===total)done()};im.onerror=()=>{failed++;if(loaded+failed===total)done()};im.src=IMGS[k];IM[k]=im}
@@ -361,7 +366,7 @@ function endGame(){over=true;mode='end';hideBub();
  $('endst').textContent=`celność ${accy}% · najdłuższa seria x${bestCombo}`;
  let say=ENDSAY[0][1];for(const[th,s]of ENDSAY)if(zn>=th)say=s;
  $('endsay').textContent=say;
- $('endimg').src=zn>=150?'assets/j_smug.png':'assets/j_laugh1.png';
+ $('endimg').src=zn>=150?'j_smug.png':'j_laugh1.png';
  $('vok').style.display='none';$('vform').style.display='flex';
  SFX.laugh();show('endv');$('endv').scrollTop=0}
 $('bRetry').addEventListener('click',()=>startGame());
