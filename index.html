@@ -34,7 +34,7 @@ button{font:inherit;color:inherit}
 .ib{pointer-events:auto;display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
 .ibtn{width:40px;height:40px;border:3px solid #111;border-radius:10px;background:rgba(255,255,255,.92);color:#111;font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation;box-shadow:0 3px 0 #111}
 .ibtn:active{transform:translateY(2px);box-shadow:0 1px 0 #111}
-#bar{position:absolute;left:0;right:0;bottom:0;height:calc(30px + var(--sab));padding:0 calc(var(--sar) + 14px) var(--sab) calc(var(--sal) + 14px);background:rgba(10,14,22,.88);display:flex;align-items:center;justify-content:space-between;z-index:3;pointer-events:none}
+#bar{position:absolute;left:0;right:0;bottom:0;height:calc(24px + var(--sab));padding:0 calc(var(--sar) + 14px) var(--sab) calc(var(--sal) + 14px);background:rgba(10,14,22,.70);display:flex;align-items:center;justify-content:space-between;z-index:3;pointer-events:none}
 #bar span{font-family:'Press Start 2P';font-size:8px;color:#9fb2c8}
 #bar .l{color:#7dffb0}#bar .r{color:var(--yel)}
 /* dymek Janusza */
@@ -129,7 +129,7 @@ function clamp(v,a,b){return v<a?a:v>b?b:v}
 const R=(a,b)=>a+Math.random()*(b-a);
 
 /* ---------- TEKSTY JANUSZA ---------- */
-const LINES=["HEHE… KUPIŁEŚ GÓRKĘ? SZWAGIER DZIĘKUJE.","SOMSIAD TEŻ TAK ZACZYNAŁ.","ANALIZĘ ROBIŁEŚ? NO WŁAŚNIE.","SPOKOJNIE, ODBIJE. ZAWSZE ODBIJA……. PRAWIE ZAWSZE.","TANIO KUPIŁEŚ? TO CZEMU PŁACZESZ?","ALE CIĘ NA STOP LOSSIE WYWALIŁO!! HEHEHE… ŁAMATOR…","POPATRZ SIĘ, WIELKI PAN JENWESTOR SIĘ ZNALAZŁ.","KUPUJESZ SOMSIAD? ….NIE??? TO JAK MA ROSNĄĆ?!","NO I CO, WTOPIŁEŚ? SOMSIAD SE NA IKE PRZERZUCIŁ I TRZYMA.","ŁOBLIGACJE SE LEPIEJ KUP, TO WOLNIEJ BĘDZIE…","TRZĘSIESZ SIĘ PRZY STRZALE, JAKBYŚ NA TRAKTORZE JECHAŁ… HEHEHE","JA CIĘ MOGĘ NAUCZYĆ, JAK SIĘ HANDLUJE. PAWILON 4D, BRONISZE. ZAPRASZAM… HEHEHE.","NIE PŁACZ. JESZCZE 60% WZROŚNIE I BĘDZIESZ NA ZERO…"];
+const LINES=["HEHE… KUPIŁEŚ GÓRKĘ? SZWAGIER DZIĘKUJE.","SOMSIAD TEŻ TAK ZACZYNAŁ.","ANALIZĘ ROBIŁEŚ? NO WŁAŚNIE.","SPOKOJNIE, ODBIJE. ZAWSZE ODBIJA……. PRAWIE ZAWSZE.","TANIO KUPIŁEŚ? TO CZEMU PŁACZESZ?","ALE CIĘ NA STOP LOSSIE WYWALIŁO!! HEHEHE… ŁAMATOR…","POPATRZ SIĘ, WIELKI PAN JENWESTOR SIĘ ZNALAZŁ.","KUPUJESZ SOMSIAD? ….NIE??? TO JAK MA ROSNĄĆ?!","NO I CO, WTOPIŁEŚ? SOMSIAD SE NA IKE PRZERZUCIŁ I TRZYMA.","ŁOBLIGACJE SE LEPIEJ KUP, TO WOLNIEJ BĘDZIE…","TRZĘSIESZ SIĘ PRZY STRZALE, JAKBYŚ NA TRAKTORZE JECHAŁ… HEHEHE","JA CIĘ MOGĘ NAUCZYĆ, JAK SIĘ HANDLUJE. PAWILON 4D, BRONISZE. ZAPRASZAM… HEHEHE.","NIE PŁACZ. JESZCZE 60% WZROŚNIE I BĘDZIESZ NA ZERO…","SPOKOJNIE, ODBIJE Z RZEPAKIEM NA WIOSNĘ…"];
 let lastLine=-1;
 function pickLine(){let i;do{i=Math.floor(Math.random()*LINES.length)}while(i===lastLine);lastLine=i;return LINES[i]}
 const FIRSTLINE="TY MAKLER? MAKLEREM TO JA SIĘ NACIERAM PO GOLENIU.";let firstJ=true;
@@ -159,6 +159,7 @@ const SFX={
 function applySnd(){document.querySelectorAll('.sndb').forEach(b=>b.innerHTML=sndOn?'&#128266;':'&#128263;')}
 function toggleSnd(e){if(e){e.stopPropagation();e.preventDefault()}sndOn=!sndOn;try{localStorage.setItem('fh_snd',sndOn?'1':'0')}catch(_){}applySnd();updateMusicVol();if(sndOn)ac()}
 applySnd();document.querySelectorAll('.sndb').forEach(b=>b.addEventListener('click',toggleSnd));
+function goFS(){const el=document.documentElement;try{if(el.requestFullscreen)el.requestFullscreen({navigationUI:'hide'});else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen()}catch(e){}}
 const unlock=()=>{try{ac()}catch(e){}initMusic()};
 document.addEventListener('pointerdown',unlock);document.addEventListener('touchend',unlock);document.addEventListener('keydown',unlock);
 document.addEventListener('gesturestart',e=>e.preventDefault());
@@ -220,11 +221,11 @@ function spawn(kind){
  const t=TYPES[kind]||{};const m=bgMap();
  const o={kind,x:0,y:0,vx:0,vy:0,ph:R(0,6.28),rot:0,vrot:0,dead:false,scared:false,big:false};
  const im=IM[(t.img)||kind];const ar=(im&&im.naturalWidth?im.naturalWidth/im.naturalHeight:1.4);
- if(kind==='train'){o.big=true;o.h=176;o.w=o.h*((IM.train.naturalWidth||620)/(IM.train.naturalHeight||570));o.y=m.iy(.60)-o.h*.5;o.dir=Math.random()<.5?1:-1;o.x=o.dir>0?-o.w:VW+o.w;o.vx=o.dir*(.19+wave*.012);SFX.horn()}
+ if(kind==='train'){o.big=true;o.h=176;o.w=o.h*((IM.train.naturalWidth||620)/(IM.train.naturalHeight||570));o.y=m.iy(.46)-o.h*.5;o.dir=Math.random()<.5?1:-1;o.x=o.dir>0?-o.w:VW+o.w;o.vx=o.dir*(.19+wave*.012);SFX.horn()}
  else if(kind==='knife'){o.h=t.h;o.w=o.h*ar;o.x=R(VW*.18,VW*.82);o.y=-o.h;o.vy=.13+wave*.014;o.vx=0;o.vrot=R(-.0005,.0005)}
  else if(kind==='rocket'){o.h=t.h;o.w=o.h*ar;o.dir=Math.random()<.5?1:-1;o.x=o.dir>0?-o.w:VW+o.w;o.y=R(VHL*.42,VHL*.62);o.vx=o.dir*(.30+wave*.02);o.vy=-.085}
  else{o.h=t.h;o.w=o.h*ar;o.dir=Math.random()<.5?1:-1;o.x=o.dir>0?-o.w:VW+o.w;
-  const band=kind==='turtle'?[.42,.52]:kind==='bird'?[.24,.46]:kind==='slot'?[.26,.48]:kind==='pewny'?[.20,.46]:kind==='fomog'?[.22,.50]:[.16,.52];
+  const band=kind==='turtle'?[.30,.42]:kind==='bird'?[.18,.38]:kind==='slot'?[.20,.40]:kind==='pewny'?[.16,.38]:kind==='fomog'?[.18,.40]:[.12,.42];
   o.y=R(VHL*band[0],VHL*band[1]);
   const base=kind==='coin'?.115:kind==='bubble'?.085:kind==='bird'?.10:kind==='fomog'?.155:kind==='pewny'?.075:kind==='slot'?.06:.07;
   o.vx=o.dir*(base+wave*.011);o.vy=kind==='bubble'?-.018:0}
@@ -236,7 +237,7 @@ function targetsUpdate(){
   if(o.kind==='bubble')o.x+=Math.sin(o.ph*.7)*.6;
   if(o.kind==='bird')o.y+=Math.sin(o.ph*.8)*.45;
   if(o.scared){o.vy-=.002*STEP}
-  if(o.kind==='knife'&&o.y+o.h>bgMap().iy(.60)+14){o.dead=true;puff(o.x+o.w/2,o.y+o.h,'#8a5a2b',10)}
+  if(o.kind==='knife'&&o.y+o.h>bgMap().iy(.52)){o.dead=true;puff(o.x+o.w/2,o.y+o.h,'#8a5a2b',10)}
   if(o.x<-o.w*1.5||o.x>VW+o.w*1.5||o.y<-o.h*2||o.y>VHL+o.h)o.dead=true;
  }
  compact(targets,o=>!o.dead)}
@@ -377,9 +378,9 @@ function endGame(){over=true;mode='end';hideBub();stopBgMusic();
  $('endimg').src=zn>=150?'j_smug.png':'j_laugh1.png';
  $('vok').style.display='none';$('vform').style.display='flex';
  SFX.laugh();show('endv');$('endv').scrollTop=0}
-$('bRetry').addEventListener('click',()=>startGame());
-$('bStart').addEventListener('click',()=>{unlock();startGame()});
-$('title').addEventListener('click',e=>{if(e.target.closest('.ibtn')||$('bStart').disabled)return;});
+$('bRetry').addEventListener('click',()=>{goFS();startGame()});
+$('bStart').addEventListener('click',()=>{unlock();goFS();startGame()});
+$('title').addEventListener('click',e=>{if(e.target.closest('.ibtn')||e.target.closest('.bigbtn')||$('bStart').disabled)return;unlock();goFS();startGame()});
 $('vform').addEventListener('submit',e=>{e.preventDefault();const em=$('vemail').value.trim();if(!em)return;
  $('vform').style.display='none';$('vok').style.display='block';try{localStorage.setItem('fh_mail',em)}catch(_){}});
 $('vemail').addEventListener('focus',()=>later(()=>{try{$('vemail').scrollIntoView({block:'center',behavior:'smooth'})}catch(e){}},350));
