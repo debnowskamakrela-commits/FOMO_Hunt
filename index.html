@@ -43,6 +43,11 @@ button{font:inherit;color:inherit}
 /* overlays */
 .view{position:absolute;inset:0;z-index:6;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(8,12,20,.62);padding:calc(var(--sat) + 16px) calc(var(--sar) + 18px) calc(var(--sab) + 16px) calc(var(--sal) + 18px)}
 .view.on{display:flex}
+
+#title .jrow-title{display:flex;align-items:center;justify-content:center;gap:clamp(8px,3vw,24px);margin:10px 0 6px;flex-wrap:nowrap}
+#title .jimg{width:clamp(100px,22vw,200px);height:auto;flex:none;transform:scaleX(-1);filter:drop-shadow(4px 4px 0 rgba(0,0,0,.5))}
+#title .ustrzel{font-family:'Press Start 2P',monospace;font-size:clamp(14px,3.5vw,26px);color:#fff;text-shadow:3px 3px 0 #c2185b,0 0 20px rgba(255,214,0,.4);line-height:1.4;text-align:left}
+#title .ustrzel b{color:var(--yel);display:block;font-size:clamp(18px,4.5vw,34px)}
 #title h1{font-family:'Press Start 2P';font-size:clamp(24px,6.5vw,52px);color:var(--yel);text-shadow:4px 4px 0 #c2185b,0 0 30px rgba(255,214,0,.45);line-height:1.25}
 #title h1 span{color:#7ce0ff;text-shadow:4px 4px 0 #c2185b}
 #title .sub{font-weight:800;font-size:clamp(12px,2.6vw,17px);margin-top:12px;color:#eaf6ff;text-shadow:2px 2px 0 #000}
@@ -91,13 +96,13 @@ button{font:inherit;color:inherit}
     <div class="hbox" id="znbox"><small>TWOJA ZNIZKA</small><b id="zn">0 ZL</b></div>
     <div class="hbox" id="cbox"><small>SERIA</small><b id="cb">0</b><div class="ib"><button class="ibtn" id="bPause" aria-label="Pauza">&#10073;&#10073;</button><button class="ibtn sndb" id="bSnd" aria-label="Dźwięk">&#128266;</button></div></div>
   </div>
-  <div id="bar" style="display:none"><span class="l" id="hits">TRAFIENIA: 0</span><span>PUDLO -1 ZL &nbsp;&middot;&nbsp; DYWIDENDA/ETF -5 ZL</span><span class="r">MAKS: 200 ZL</span></div>
+  <div id="bar" style="display:none"><span class="l" id="hits">TRAFIENIA: 0</span><span>PUDLO -1 ZL &nbsp;&middot;&nbsp; DYWIDENDA/ETF -5 ZL</span><span class="r">MAKS: 400 ZL</span></div>
   <div id="bub"></div>
 
   <div class="view on" id="title">
     <h1>FOMO<br><span>HUNT</span></h1>
-    <div class="sub">Nastrzelaj sobie zniżkę na kurs AI Invest</div>
-    <div class="rules">TAP = STRZAŁ &nbsp;&middot;&nbsp; trafienie <em>+1 zł</em> zniżki (seria: +2, +3)<br>pudło <i>−1 zł</i> &nbsp;&middot;&nbsp; <b>NIE STRZELAJ</b> w DYWIDENDĘ i ETF (<i>−5 zł</i>)<br>90 sekund &nbsp;&middot;&nbsp; maks. <i>200 zł</i></div>
+    <div class="jrow-title"><img class="jimg" src="j_laugh1.png" alt="Janusz"><div class="ustrzel">USTRZEL DO<br><b>400 ZŁ ZNIŻKI</b><br>na kurs AI Invest</div></div>
+    <div class="rules">TAP = STRZAŁ &nbsp;&middot;&nbsp; trafienie <em>+1 zł</em> zniżki (seria: +2, +3)<br>pudło <i>−1 zł</i> &nbsp;&middot;&nbsp; <b>NIE STRZELAJ</b> w DYWIDENDĘ i ETF (<i>−5 zł</i>)<br>90 sekund &nbsp;&middot;&nbsp; maks. <i>400 zł</i></div>
     <button class="bigbtn" id="bStart" disabled>ŁADOWANIE…</button>
     <div id="lder">POBIERANIE GRAFIK…</div>
     <button class="ibtn sndb" id="bSnd2" style="position:absolute;right:calc(var(--sar) + 14px);bottom:calc(var(--sab) + 14px)" aria-label="Dźwięk">&#128266;</button>
@@ -120,7 +125,7 @@ button{font:inherit;color:inherit}
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
-const STEP=1000/60,ROUND=90,CAP=200;
+const STEP=1000/60,ROUND=90,CAP=400;
 const timers=new Set();
 function later(fn,ms){const t=setTimeout(()=>{timers.delete(t);fn()},ms);timers.add(t);return t}
 function clearTimers(){timers.forEach(clearTimeout);timers.clear()}
@@ -129,11 +134,11 @@ function clamp(v,a,b){return v<a?a:v>b?b:v}
 const R=(a,b)=>a+Math.random()*(b-a);
 
 /* ---------- TEKSTY JANUSZA ---------- */
-const LINES=["HEHE… KUPIŁEŚ GÓRKĘ? SZWAGIER DZIĘKUJE.","SOMSIAD TEŻ TAK ZACZYNAŁ.","ANALIZĘ ROBIŁEŚ? NO WŁAŚNIE.","SPOKOJNIE, ODBIJE. ZAWSZE ODBIJA……. PRAWIE ZAWSZE.","TANIO KUPIŁEŚ? TO CZEMU PŁACZESZ?","ALE CIĘ NA STOP LOSSIE WYWALIŁO!! HEHEHE… ŁAMATOR…","POPATRZ SIĘ, WIELKI PAN JENWESTOR SIĘ ZNALAZŁ.","KUPUJESZ SOMSIAD? ….NIE??? TO JAK MA ROSNĄĆ?!","NO I CO, WTOPIŁEŚ? SOMSIAD SE NA IKE PRZERZUCIŁ I TRZYMA.","ŁOBLIGACJE SE LEPIEJ KUP, TO WOLNIEJ BĘDZIE…","TRZĘSIESZ SIĘ PRZY STRZALE, JAKBYŚ NA TRAKTORZE JECHAŁ… HEHEHE","JA CIĘ MOGĘ NAUCZYĆ, JAK SIĘ HANDLUJE. PAWILON 4D, BRONISZE. ZAPRASZAM… HEHEHE.","NIE PŁACZ. JESZCZE 60% WZROŚNIE I BĘDZIESZ NA ZERO…","SPOKOJNIE, ODBIJE Z RZEPAKIEM NA WIOSNĘ…"];
-let lastLine=-1;
-function pickLine(){let i;do{i=Math.floor(Math.random()*LINES.length)}while(i===lastLine);lastLine=i;return LINES[i]}
+const LINES=["HEHE… KUPIŁEŚ GÓRKĘ? SZWAGIER DZIĘKUJE.","SOMSIAD TEŻ TAK ZACZYNAŁ.","ANALIZĘ ROBIŁEŚ? NO WŁAŚNIE.","TANIO KUPIŁEŚ? TO CZEMU PŁACZESZ?","ALE CIĘ NA STOP LOSSIE WYWALIŁO!! HEHEHE… ŁAMATOR…","POPATRZ SIĘ, WIELKI PAN JENWESTOR SIĘ ZNALAZŁ.","KUPUJESZ SOMSIAD? ….NIE??? TO JAK MA ROSNĄĆ?!","NIE NIE NIE SOMSIAD… MÓWIŁEM SPRZEDAJ, A NIE KUPUJ!","ŁOBLIGACJE SE LEPIEJ KUP, TO WOLNIEJ BĘDZIE…","JA CIĘ MOGĘ NAUCZYĆ, JAK SIĘ HANDLUJE. PAWILON 4D, BRONISZE. ZAPRASZAM… HEHEHE.","NIE PŁACZ. JESZCZE 60% WZROŚNIE I BĘDZIESZ NA ZERO…","SPOKOJNIE, ODBIJE Z RZEPAKIEM NA WIOSNĘ…"];
+let lineIdx=0;
+function pickLine(){const t=LINES[lineIdx];lineIdx=(lineIdx+1)%LINES.length;return t}
 const FIRSTLINE="TY MAKLER? MAKLEREM TO JA SIĘ NACIERAM PO GOLENIU.";let firstJ=true;
-const ENDSAY=[[0,"PAWILON 4D BRONISZE, 4 RANO. PRZYJDŹ, TO CI POKAŻĘ, JAKIE OTWARCIE ZE SZWAGREM ROBIMY… HEHEHE."],[50,"NO, PRAWIE JAK PAN JENWESTOR. PRAWIE."],[100,"NO NO. SZWAGIER BY SIĘ NIE POWSTYDZIŁ."],[150,"DOBRA, ODDAJ DŹWIGNIĘ. UMIESZ."]];
+const ENDSAY=[[0,"PAWILON 4D BRONISZE, 4 RANO. PRZYJDŹ, TO CI POKAŻĘ, JAKIE OTWARCIE ZE SZWAGREM ROBIMY… HEHEHE."],[100,"NO, PRAWIE JAK PAN JENWESTOR. PRAWIE."],[200,"NO NO. SZWAGIER BY SIĘ NIE POWSTYDZIŁ."],[300,"DOBRA, ODDAJ DŹWIGNIĘ. UMIESZ."]];
 
 /* ---------- AUDIO ---------- */
 let AC=null;let sndOn=true;try{sndOn=localStorage.getItem('fh_snd')!=='0'}catch(e){}
@@ -151,7 +156,25 @@ const SFX={
  big(){tone(520,780,.09,'square',.16);tone(780,1160,.12,'square',.13,.08);tone(1160,1560,.14,'square',.11,.17)},
  miss(){tone(190,120,.12,'triangle',.14)},
  bad(){tone(340,110,.4,'sawtooth',.16);noise(.12,.08)},
- laugh(){tone(250,240,.09,'square',.15);tone(205,195,.09,'square',.15,.13);tone(170,160,.12,'square',.15,.26)},
+ laugh(){const c=ac();if(!c||!sndOn)return;const t=c.currentTime;
+  /* szyderczy rechot - 5 pulsów "he-he-he-he-he" */
+  for(let i=0;i<5;i++){const d=i*.11;const f=220-i*18;
+   const o=c.createOscillator(),g=c.createGain();o.type='sawtooth';
+   o.frequency.setValueAtTime(f,t+d);o.frequency.exponentialRampToValueAtTime(f*.7,t+d+.08);
+   g.gain.setValueAtTime(.18,t+d);g.gain.setValueAtTime(.22,t+d+.02);g.gain.exponentialRampToValueAtTime(.001,t+d+.09);
+   o.connect(g);g.connect(c.destination);o.start(t+d);o.stop(t+d+.1)}
+  /* nosowe "hnn" pod spodem */
+  const o2=c.createOscillator(),g2=c.createGain();o2.type='triangle';
+  o2.frequency.setValueAtTime(140,t);o2.frequency.setValueAtTime(155,t+.15);o2.frequency.setValueAtTime(130,t+.3);o2.frequency.setValueAtTime(150,t+.42);
+  g2.gain.setValueAtTime(.12,t);g2.gain.exponentialRampToValueAtTime(.001,t+.55);
+  const bp=c.createBiquadFilter();bp.type='bandpass';bp.frequency.value=180;bp.Q.value=3;
+  o2.connect(bp);bp.connect(g2);g2.connect(c.destination);o2.start(t);o2.stop(t+.56);
+  /* szum oddechowy */
+  const n=c.sampleRate*.4,b=c.createBuffer(1,n,c.sampleRate),d2=b.getChannelData(0);
+  for(let i=0;i<n;i++){const e=Math.sin(i/n*Math.PI*10)*.5+.5;d2[i]=(Math.random()*2-1)*e*(1-i/n)*.3}
+  const bs=c.createBufferSource();bs.buffer=b;const gn=c.createGain();gn.gain.value=.07;
+  const hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=2000;
+  bs.connect(hp);hp.connect(gn);gn.connect(c.destination);bs.start(t)},
  horn(){tone(392,392,.16,'sawtooth',.13);tone(494,494,.22,'sawtooth',.13,.14)},
  tick(){tone(1100,1100,.03,'square',.07)},
  bell(){tone(1568,1568,.11,'square',.12);tone(2093,2093,.3,'square',.1,.11)}
@@ -366,7 +389,7 @@ function startGame(){clearTimers();hideBub();
  zn=0;combo=0;bestCombo=0;shots=0;hits=0;secs=ROUND;wave=0;gt=0;over=false;paused=false;
  targets.length=0;parts.length=0;floats.length=0;ringFx.length=0;
  spawnT=400;spawnIv=1300;speedM=1;trainT=R(16000,22000);graceT=6000;
- for(const k in hudC)delete hudC[k];JB.st='peek';JB.t=0;firstJ=true;
+ for(const k in hudC)delete hudC[k];JB.st='peek';JB.t=0;firstJ=true;lineIdx=0;
  mode='play';show(null);hud();SFX.bell();lastTs=null;acc=0;startBgMusic();
  if(!loop)loop=requestAnimationFrame(frameLoop)}
 function endGame(){over=true;mode='end';hideBub();stopBgMusic();
